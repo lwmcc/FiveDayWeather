@@ -30,10 +30,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val weather = mainViewModel.weather.collectAsState().value
-                        MainScreen(
-                            "init box",
-                            weather,
-                        ) { zip -> mainViewModel.fetchFiveDayWeather(zip) }
+                        MainScreen(weather) { zip -> mainViewModel.fetchFiveDayWeather(zip) }
                     }
                 }
             }

@@ -86,6 +86,10 @@ dependencies {
 
     // Turbine
     testImplementation(libs.turbine)
+
+    // Coroutine Testing
+    implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 
