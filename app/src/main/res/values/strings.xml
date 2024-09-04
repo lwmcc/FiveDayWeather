@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FiveDayWeather</string>
+    <string name="screen_load_error">An Error Occurred While Loading Data...</string>
 </resources>

@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.mccarty.fivedayweather.ui.MainViewModel
+import com.mccarty.fivedayweather.ui.components.MainScreen
 import com.mccarty.fivedayweather.ui.theme.FiveDayWeatherTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,32 +24,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FiveDayWeatherTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-
-                    mainViewModel.fetchFiveDayWeather()
-
-                    Greeting("Android")
+                Scaffold { padding ->
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        val weather = mainViewModel.weather.collectAsState().value
+                        MainScreen(
+                            "init box",
+                            weather,
+                        ) { zip -> mainViewModel.fetchFiveDayWeather(zip) }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FiveDayWeatherTheme {
-        Greeting("Android")
     }
 }
