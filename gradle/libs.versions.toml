@@ -13,6 +13,7 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+kotlinTest = "1.8.0"
 kotlinxCoroutinesAndroid = "1.8.0"
 kotlinxCoroutinesTest = "1.8.0"
 lifecycleRuntimeKtx = "2.8.4"
@@ -46,6 +47,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }

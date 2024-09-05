@@ -90,6 +90,9 @@ dependencies {
     // Coroutine Testing
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // Kotlin Test
+    testImplementation(libs.kotlin.test)
 }
 
 
