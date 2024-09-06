@@ -1,6 +1,9 @@
 package com.mccarty.fivedayweather.domain
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.mccarty.fivedayweather.domain.model.ApiResponse
+import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.Location
 import com.mccarty.fivedayweather.domain.network.NetworkRequest
 import com.mccarty.fivedayweather.repository.GetLocalRepository
@@ -23,5 +26,12 @@ class FetchWeatherUseCase @Inject constructor(
 
     override suspend fun getFiveDayWeatherLocal(): Flow<String> = flow {
        emit(getWeatherRepository.getFiveDayWeather())
+    }
+
+    override suspend fun getCityWeatherData(): CityWeatherData {
+        return Gson().fromJson(
+            getWeatherRepository.getFiveDayWeather(),
+            object : TypeToken<CityWeatherData>() {}.type,
+        )
     }
 }

@@ -36,13 +36,9 @@ class MainViewModel @Inject constructor(
     var weather = _weather
 
     fun fetchFiveDayWeather(zip: String) {
-        _weather.value = FiveDayWeather.Pending(true)
         viewModelScope.launch {
 
-            val cityWeatherData: CityWeatherData = Gson().fromJson(
-                fetchWeatherUseCase.getFiveDayWeatherLocal().first(),
-                object : TypeToken<CityWeatherData>() {}.type,
-            )
+            val cityWeatherData = fetchWeatherUseCase.getCityWeatherData()
 
             val location: Deferred<Location?> = async {
                 when (val loc = fetchWeatherUseCase.fetchLocation(zip).catch {

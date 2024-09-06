@@ -6,6 +6,8 @@ import com.mccarty.fivedayweather.domain.InsertWeather
 import com.mccarty.fivedayweather.domain.entity.FiveDayWeather
 import com.mccarty.fivedayweather.domain.model.ApiResponse
 import com.mccarty.fivedayweather.domain.model.City
+import com.mccarty.fivedayweather.domain.model.CityTemp
+import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.Clouds
 import com.mccarty.fivedayweather.domain.model.Coord
 import com.mccarty.fivedayweather.domain.model.ListItem
@@ -45,7 +47,7 @@ class MainViewModelTest {
     fun `verify data is success object`() = runTest {
         mainViewModel.fetchFiveDayWeather(FAKE_ZIP)
         mainViewModel.weather.test {
-            assertThat(awaitItem(), instanceOf(MainViewModel.FiveDayWeather::class.java))
+            assertThat(awaitItem(), instanceOf(MainViewModel.FiveDayWeather.Success::class.java))
         }
     }
 
@@ -55,7 +57,7 @@ class MainViewModelTest {
         mainViewModel.weather.test {
             val weather = awaitItem()
             assertIs<MainViewModel.FiveDayWeather.Success>(weather)
-            assertEquals(1, (weather).data.size)
+            assertEquals(1, weather.data.size)
         }
     }
 
@@ -65,8 +67,15 @@ class MainViewModelTest {
         mainViewModel.weather.test {
             val weather = awaitItem()
             assertIs<MainViewModel.FiveDayWeather.Success>(weather)
-            assertEquals(294.93, (weather).data[0].main.temp, DELTA)
+            assertEquals(294.93, weather.data[0].main.temp, DELTA)
         }
+    }
+
+    @Test
+    fun `assert City name is correct`() = runTest {
+        mainViewModel.fetchFiveDayWeather(FAKE_ZIP)
+        val  cityWeatherData = FetchWeatherUseCaseFake().getCityWeatherData()
+        assertEquals(FAKE_CITY, cityWeatherData.name)
     }
 
     private val coord = Coord(lat = 44.34, lon = 10.99)
@@ -98,7 +107,7 @@ class MainViewModelTest {
         seaLevel = 1018,
         grndLevel = 935,
         humidity = 64,
-        tempKf = 0.0,
+        tempKf = 333.0,
     )
 
     private val clouds = Clouds(all = 88)
@@ -135,6 +144,32 @@ class MainViewModelTest {
         zip = "85248",
     )
 
+    private val cityTemps = CityTemp(
+        temp = 294.93,
+        feelsLike = 294.83,
+        tempKf = 333.0,
+        gust = 15.5,
+        speed = 55.5,
+        humidity = 13,
+        deg = 33,
+        all = 88,
+        visibility = 132,
+        weather = listOf(weather),
+        main = main,
+    )
+
+    val cityWeatherData = CityWeatherData(
+        name = "Chandler",
+        country = "US",
+        zip = "85248",
+        sunset = 1661882248,
+        sunrise = 1661834187,
+        timezone = 7200,
+        lat = 33.30616000,
+        lon = -111.84125000,
+        cityTemps = listOf(cityTemps),
+    )
+
     inner class FetchWeatherUseCaseFake : FetchWeather {
         override suspend fun fetchLocation(zip: String): Flow<NetworkRequest<Location>> {
             return flow {
@@ -155,6 +190,8 @@ class MainViewModelTest {
             // TODO: to implement
             return emptyFlow()
         }
+
+        override suspend fun getCityWeatherData(): CityWeatherData = cityWeatherData
     }
 
     inner class InsertWeatherUseCaseFake : InsertWeather {
@@ -165,6 +202,7 @@ class MainViewModelTest {
 
     companion object {
         const val FAKE_ZIP = "85248"
+        const val FAKE_CITY = "Chandler"
         const val DELTA = 0.0001
     }
 }
