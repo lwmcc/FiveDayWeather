@@ -5,5 +5,5 @@ data class Location(
     val lat: Double,
     val lon: Double,
     val name: String,
-    val zip: String
+    val zip: String?,
 )

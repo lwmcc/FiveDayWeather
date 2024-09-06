@@ -1,12 +1,14 @@
 package com.mccarty.fivedayweather.domain.model
 
-import androidx.room.Entity
-
 data class CityWeatherData(
     val name: String,
+    val country: String?,
+    val zip: String?,
     val sunrise: Long,
     val sunset: Long,
     val timezone: Int,
+    val lat: Double? = 0.0,
+    val lon: Double? = 0.0,
     val cityTemps: List<CityTemp>,
 )
 
@@ -21,4 +23,5 @@ data class CityTemp(
     val all: Int,
     val visibility: Int,
     val weather: List<Weather>,
+    val main: Main,
 )

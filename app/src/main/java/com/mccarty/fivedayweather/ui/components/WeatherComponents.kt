@@ -29,12 +29,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mccarty.fivedayweather.R
+import com.mccarty.fivedayweather.domain.model.CityTemp
+import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.ListItem
-import com.mccarty.fivedayweather.ui.MainViewModel
+import com.mccarty.fivedayweather.ui.MainViewModel as FiveDayWeather
 
 
 @Composable
-fun MainScreen(weather: MainViewModel.FiveDayWeather, onClick: (String) -> Unit) {
+fun MainScreen(weather: FiveDayWeather.FiveDayWeather, onClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,17 +47,19 @@ fun MainScreen(weather: MainViewModel.FiveDayWeather, onClick: (String) -> Unit)
         })
 
         when (weather) {
-            is MainViewModel.FiveDayWeather.Pending -> {
+            is FiveDayWeather.FiveDayWeather.Pending -> {
                 if (weather.pending) {
                     CircleSpinner()
                 }
             }
 
-            is MainViewModel.FiveDayWeather.Error -> {
-                Error(stringResource(id = R.string.screen_load_error))
+            is FiveDayWeather.FiveDayWeather.Error -> {
+                WeatherDataDb(weather = weather.cityWeatherDataDb, onCardClick = {
+                    // TODO: go to next screen
+                })
             }
 
-            is MainViewModel.FiveDayWeather.Success -> {
+            is FiveDayWeather.FiveDayWeather.Success -> {
                 WeatherData(weather = weather.data, onCardClick = {
                     // TODO: go to next screen
                 })
@@ -88,6 +92,17 @@ fun WeatherData(weather: List<ListItem>, onCardClick: () -> Unit) {
     LazyColumn {
         items(weather) { weatherItem ->
             WeatherItem(weatherItem, onCardClick = {
+                onCardClick()
+            })
+        }
+    }
+}
+
+@Composable
+fun WeatherDataDb(weather: CityWeatherData, onCardClick: () -> Unit) {
+    LazyColumn {
+        items(weather.cityTemps) { weatherItem ->
+            WeatherItemDb(weatherItem, onCardClick = {
                 onCardClick()
             })
         }
@@ -159,5 +174,60 @@ fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+@Composable
+fun WeatherItemDb(weatherItem: CityTemp, onCardClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = {
+                    onCardClick()
+                }
+            )
+            .padding(5.dp)
+            .shadow(
+                elevation = 2.dp,
+                shape = RectangleShape,
+                clip = false,
+                ambientColor = DefaultShadowColor,
+                spotColor = DefaultShadowColor,
+            ),
+        shape = MaterialTheme.shapes.extraSmall,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSurface,
+        ),
+    ) {
+        Text(
+            text = weatherItem.temp.toString(),
+            modifier = Modifier
+                .paddingFromBaseline(top = 25.dp)
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Text(
+            text = weatherItem.feelsLike.toString(),
+            modifier = Modifier
+                .paddingFromBaseline(top = 25.dp)
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Text(
+            text = weatherItem.speed.toString(),
+            modifier = Modifier
+                .paddingFromBaseline(top = 25.dp)
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }

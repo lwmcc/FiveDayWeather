@@ -2,6 +2,8 @@ package com.mccarty.fivedayweather
 
 import app.cash.turbine.test
 import com.mccarty.fivedayweather.domain.FetchWeather
+import com.mccarty.fivedayweather.domain.InsertWeather
+import com.mccarty.fivedayweather.domain.entity.FiveDayWeather
 import com.mccarty.fivedayweather.domain.model.ApiResponse
 import com.mccarty.fivedayweather.domain.model.City
 import com.mccarty.fivedayweather.domain.model.Clouds
@@ -15,6 +17,7 @@ import com.mccarty.fivedayweather.domain.model.Wind
 import com.mccarty.fivedayweather.domain.network.NetworkRequest
 import com.mccarty.fivedayweather.ui.MainViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.instanceOf
@@ -35,7 +38,7 @@ class MainViewModelTest {
 
     @Before
     fun setup() {
-        mainViewModel = MainViewModel(FetchWeatherUseCaseFake())
+        mainViewModel = MainViewModel(FetchWeatherUseCaseFake(), InsertWeatherUseCaseFake())
     }
 
     @Test
@@ -146,6 +149,17 @@ class MainViewModelTest {
             return flow {
                 emit(NetworkRequest.Success(apiResponse))
             }
+        }
+
+        override suspend fun getFiveDayWeatherLocal(): Flow<String> {
+            // TODO: to implement
+            return emptyFlow()
+        }
+    }
+
+    inner class InsertWeatherUseCaseFake : InsertWeather {
+        override suspend fun insertFiveDayWeather(fiveDayWeather: FiveDayWeather) {
+            // TODO: to implement
         }
     }
 

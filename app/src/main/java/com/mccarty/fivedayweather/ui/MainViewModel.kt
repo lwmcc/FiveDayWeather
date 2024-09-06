@@ -28,7 +28,7 @@ class MainViewModel @Inject constructor(
 
     sealed class FiveDayWeather {
         data class Pending(val pending: Boolean): FiveDayWeather()
-        data class Error(val message: String): FiveDayWeather()
+        data class Error(val cityWeatherDataDb: CityWeatherData): FiveDayWeather()
         data class Success(val data: List<ListItem>): FiveDayWeather()
     }
 
@@ -39,21 +39,23 @@ class MainViewModel @Inject constructor(
         _weather.value = FiveDayWeather.Pending(true)
         viewModelScope.launch {
 
+            val cityWeatherData: CityWeatherData = Gson().fromJson(
+                fetchWeatherUseCase.getFiveDayWeatherLocal().first(),
+                object : TypeToken<CityWeatherData>() {}.type,
+            )
+
             val location: Deferred<Location?> = async {
-
-                // TODO: testing
-                val fiveDayWeather = fetchWeatherUseCase.getFiveDayWeatherLocal().first()
-                val type = object : TypeToken<CityWeatherData>() {}.type
-                val cityWeatherData: CityWeatherData = Gson().fromJson(fiveDayWeather, type)
-
-                println("MainViewModel ***** FROM DB ${cityWeatherData.name}")
-                println("MainViewModel ***** FROM DB ${cityWeatherData.sunrise}")
-
                 when (val loc = fetchWeatherUseCase.fetchLocation(zip).catch {
                     it.message // TODO: Log this
                 }.first()) {
                     is NetworkRequest.Error -> {
-                        null
+                        Location(
+                            country = cityWeatherData.country,
+                            lat = cityWeatherData.lat ?: 0.0,
+                            lon = cityWeatherData.lon ?: 0.0,
+                            name = cityWeatherData.name,
+                            zip = cityWeatherData.zip,
+                        )
                     }
                     is NetworkRequest.Success -> {
                         Location(
@@ -75,7 +77,7 @@ class MainViewModel @Inject constructor(
                 .collect { request ->
                     when (request) {
                         is NetworkRequest.Error -> {
-                            _weather.value = FiveDayWeather.Error(request.message)
+                            _weather.value = FiveDayWeather.Error(cityWeatherData)
                         }
 
                         is NetworkRequest.Success -> {
@@ -92,14 +94,19 @@ class MainViewModel @Inject constructor(
                                     all = item.clouds.all,
                                     visibility = item.visibility,
                                     weather = item.weather,
+                                    main = item.main,
                                 )
                             }
 
                             val cityData = CityWeatherData(
                                 name = request.data.city.name,
+                                country = loc?.country,
+                                zip = loc?.zip,
                                 sunrise = request.data.city.sunrise,
                                 sunset = request.data.city.sunset,
                                 timezone = request.data.city.timezone,
+                                lat = loc?.lat,
+                                lon = loc?.lon,
                                 cityTemps = cityTemps,
                             )
 
