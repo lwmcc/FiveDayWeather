@@ -70,21 +70,23 @@ fun MainScreen(weather: FiveDayWeather.FiveDayWeather, onClick: (String) -> Unit
 
 @Composable
 fun SearchBox(onClick: (String) -> Unit) {
+    val maxLength = 5
+    val pattern = Regex("^\\d+\$")
     var searchText by rememberSaveable { mutableStateOf("") }
 
-        Row {
-            TextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                label = { Text(stringResource(id = R.string.zip_code)) },
-            )
-            Button(onClick = {
-                onClick(searchText)
-            }
-            ) {
-                Text(stringResource(id = R.string.submit))
-            }
+    Row {
+        TextField(
+            value = searchText,
+            onValueChange = { if (it.length <= maxLength && it.matches(pattern)) searchText = it },
+            label = { Text(stringResource(id = R.string.zip_code)) },
+        )
+        Button(onClick = {
+            onClick(searchText)
         }
+        ) {
+            Text(stringResource(id = R.string.submit))
+        }
+    }
 }
 
 @Composable
