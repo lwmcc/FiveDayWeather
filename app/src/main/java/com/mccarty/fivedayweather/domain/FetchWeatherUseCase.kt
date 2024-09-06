@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class FetchWeatherUseCase @Inject constructor(
     private val fetchWeatherRepository: Repository,
-    //private val getWeatherRepository: GetLocalRepository,
+    private val getWeatherRepository: GetLocalRepository,
 ): FetchWeather {
 
     override suspend fun fetchLocation(zip: String): Flow<NetworkRequest<Location>> = flow {
@@ -21,7 +21,7 @@ class FetchWeatherUseCase @Inject constructor(
         emit(fetchWeatherRepository.fetchWeatherLatLon(lat, lon))
     }
 
-   /* override suspend fun getFiveDayWeatherLocal() {
-       // getWeatherRepository.getFiveDayWeather()
-    }*/
+    override suspend fun getFiveDayWeatherLocal(): Flow<String> = flow {
+       emit(getWeatherRepository.getFiveDayWeather())
+    }
 }

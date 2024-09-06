@@ -19,8 +19,8 @@ abstract class InterfaceModule {
     @Binds
     abstract fun provideWeatherRepository(fetchWeatherRepository: FetchWeatherRepository): Repository
 
-   // @Binds
-    //abstract fun provideFetchWeatherRepository(fetchWeatherRepository: FetchWeatherRepository): GetLocalRepository
+    @Binds
+    abstract fun provideGetLocalRepository(fetchWeatherRepository: FetchWeatherRepository): GetLocalRepository
 
     @Binds
     abstract fun provideFetchWeatherRepository(fetchWeatherRepository: FetchWeatherRepository): InsertLocalRepository

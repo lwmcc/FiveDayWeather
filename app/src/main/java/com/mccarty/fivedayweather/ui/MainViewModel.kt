@@ -3,6 +3,7 @@ package com.mccarty.fivedayweather.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.mccarty.fivedayweather.domain.FetchWeather
 import com.mccarty.fivedayweather.domain.InsertWeather
 import com.mccarty.fivedayweather.domain.model.CityTemp
@@ -39,6 +40,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
 
             val location: Deferred<Location?> = async {
+
+                // TODO: testing
+                val fiveDayWeather = fetchWeatherUseCase.getFiveDayWeatherLocal().first()
+                val type = object : TypeToken<CityWeatherData>() {}.type
+                val cityWeatherData: CityWeatherData = Gson().fromJson(fiveDayWeather, type)
+
+                println("MainViewModel ***** FROM DB ${cityWeatherData.name}")
+                println("MainViewModel ***** FROM DB ${cityWeatherData.sunrise}")
+
                 when (val loc = fetchWeatherUseCase.fetchLocation(zip).catch {
                     it.message // TODO: Log this
                 }.first()) {
@@ -93,16 +103,11 @@ class MainViewModel @Inject constructor(
                                 cityTemps = cityTemps,
                             )
 
-                            val gson = Gson()
-                            val toSave = gson.toJson(cityData)
-                            println("MainViewModel ***** $toSave")
-
-
-                            val  e= com.mccarty.fivedayweather.domain.entity.FiveDayWeather(cityWeatherData = toSave)
+                            val  entity = com.mccarty.fivedayweather.domain.entity.FiveDayWeather(cityWeatherData = Gson().toJson(cityData))
 
                             _weather.value = FiveDayWeather.Success(items)
                             viewModelScope.launch {
-                                insertWeatherUseCas.insertFiveDayWeather(e)
+                                insertWeatherUseCas.insertFiveDayWeather(entity)
                             }
                         }
                     }

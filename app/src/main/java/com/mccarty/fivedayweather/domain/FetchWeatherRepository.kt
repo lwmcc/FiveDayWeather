@@ -17,7 +17,7 @@ class FetchWeatherRepository @Inject constructor(
     @Named(FORECAST_URL) private val weatherServiceForecast: WeatherService,
     @Named(ZIP_URL) private val weatherServiceZip: WeatherService,
     private val appDatabase: AppDatabase,
-) : Repository, InsertLocalRepository {
+) : Repository, InsertLocalRepository, GetLocalRepository {
     override suspend fun fetchWeatherLatLon(lat: String, lon: String): NetworkRequest<ApiResponse> {
         return weatherServiceForecast.fetch5DayWeatherLatLon(lat, lon, APP_ID)
     }
@@ -29,4 +29,6 @@ class FetchWeatherRepository @Inject constructor(
     override suspend fun insertFiveDayWeather(fiveDayWeather: FiveDayWeather ) {
         appDatabase.weatherDao().insertFiveDayWeather(fiveDayWeather)
     }
+
+    override suspend fun getFiveDayWeather() = appDatabase.weatherDao().getFiveDayWeather()
 }
