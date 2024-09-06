@@ -66,9 +66,9 @@ class MainViewModelTest {
         }
     }
 
-    val coord = Coord(lat = 44.34, lon = 10.99)
+    private val coord = Coord(lat = 44.34, lon = 10.99)
 
-    val city = City(
+    private val city = City(
         id = 3163858,
         name = "Zocca",
         coord = coord,
@@ -79,14 +79,14 @@ class MainViewModelTest {
         sunset = 1661882248,
     )
 
-    val weather = Weather(
+    private val weather = Weather(
         id = 500,
         main = "Rain",
         description = "light rain",
         icon = "10d",
     )
 
-    val main = Main(
+    private val main = Main(
         temp = 294.93,
         feelsLike = 294.83,
         tempMin = 294.93,
@@ -98,13 +98,13 @@ class MainViewModelTest {
         tempKf = 0.0,
     )
 
-    val clouds = Clouds(all = 88)
+    private val clouds = Clouds(all = 88)
 
-    val wind = Wind(speed = 1.14, deg = 17, gust = 1.57)
+    private val wind = Wind(speed = 1.14, deg = 17, gust = 1.57)
 
-    val sys = Sys(pod = "n")
+    private val sys = Sys(pod = "n")
 
-    val listItem = ListItem(
+    private val listItem = ListItem(
         dt = 0,
         main = main,
         weather = listOf(weather),

@@ -9,4 +9,6 @@ object Constants {
     const val LAT_URL = "lat"
     const val LON_URL = "lon"
     const val APP_ID_URL = "appid"
+
+    const val WEATHER_DB = "weather-db"
 }

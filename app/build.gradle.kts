@@ -93,6 +93,12 @@ dependencies {
 
     // Kotlin Test
     testImplementation(libs.kotlin.test)
+
+    // Room db
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
 }
 
 
