@@ -10,5 +10,5 @@ interface FetchWeather {
     suspend fun fetchLocation(zip: Int): Flow<NetworkRequest<Location>>
     suspend fun fetchFiveDayWeatherLatLon(lat: String, lon: String):  Flow<NetworkRequest<ApiResponse>>
     suspend fun getFiveDayWeatherLocal(): Flow<String>
-    suspend fun getCityWeatherData(): CityWeatherData
+    suspend fun getCityWeatherData(): CityWeatherData?
 }

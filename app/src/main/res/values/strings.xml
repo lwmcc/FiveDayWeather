@@ -7,4 +7,10 @@
     <string name="feels_like">Feels like</string>
     <string name="humidity">Humidity %1$s%%</string>
     <string name="content_weather_icon">Weather icon</string>
+    <string name="weather_description">Weather description</string>
+
+    <string name="temp">Temp:&#032;</string>
+    <string name="max_temp">Max:&#032;</string>
+    <string name="min_temp">Min:&#032;</string>
+    <string name="weather_conditions">Conditions:&#032;</string>
 </resources>

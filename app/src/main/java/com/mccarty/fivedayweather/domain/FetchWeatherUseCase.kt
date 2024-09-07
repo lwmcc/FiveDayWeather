@@ -25,13 +25,12 @@ class FetchWeatherUseCase @Inject constructor(
     }
 
     override suspend fun getFiveDayWeatherLocal(): Flow<String> = flow {
-       emit(getWeatherRepository.getFiveDayWeather())
+        getWeatherRepository.getFiveDayWeather()?.let { emit(it) }
     }
 
-    override suspend fun getCityWeatherData(): CityWeatherData {
-        return Gson().fromJson(
-            getWeatherRepository.getFiveDayWeather(),
-            object : TypeToken<CityWeatherData>() {}.type,
-        )
+    override suspend fun getCityWeatherData(): CityWeatherData? {
+        return getWeatherRepository.getFiveDayWeather()?.let {
+            Gson().fromJson(it, CityWeatherData::class.java)
+        }
     }
 }

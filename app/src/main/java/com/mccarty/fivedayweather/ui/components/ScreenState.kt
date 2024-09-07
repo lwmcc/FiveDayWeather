@@ -1,6 +1,5 @@
 package com.mccarty.fivedayweather.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +20,6 @@ fun CircleSpinner(width: Dp = 64.dp) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator(

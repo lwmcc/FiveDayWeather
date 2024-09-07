@@ -171,7 +171,7 @@ class MainViewModelTest {
     )
 
     inner class FetchWeatherUseCaseFake : FetchWeather {
-        override suspend fun fetchLocation(zip: String): Flow<NetworkRequest<Location>> {
+        override suspend fun fetchLocation(zip: Int): Flow<NetworkRequest<Location>> {
             return flow {
                 emit(NetworkRequest.Success(location))
             }
@@ -201,7 +201,7 @@ class MainViewModelTest {
     }
 
     companion object {
-        const val FAKE_ZIP = "85248"
+        const val FAKE_ZIP = 85248
         const val FAKE_CITY = "Chandler"
         const val DELTA = 0.0001
     }

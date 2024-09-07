@@ -6,11 +6,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mccarty.fivedayweather.domain.FetchWeather
 import com.mccarty.fivedayweather.domain.InsertWeather
+import com.mccarty.fivedayweather.domain.entity.FiveDayWeather
 import com.mccarty.fivedayweather.domain.model.CityTemp
 import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.ListItem
 import com.mccarty.fivedayweather.domain.model.Location
 import com.mccarty.fivedayweather.domain.network.NetworkRequest
+import com.mccarty.fivedayweather.ui.components.WeatherDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,30 +29,32 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     sealed class FiveDayWeather {
-        data class Pending(val pending: Boolean): FiveDayWeather()
-        data class Error(val cityWeatherDataDb: CityWeatherData): FiveDayWeather()
-        data class Success(val data: List<ListItem>): FiveDayWeather()
+        data class Pending(val pending: Boolean) : FiveDayWeather()
+        data class Error(val cityWeatherDataDb: CityWeatherData?) : FiveDayWeather()
+        data class Success(val data: List<ListItem>) : FiveDayWeather()
     }
 
     private var _weather = MutableStateFlow<FiveDayWeather>(FiveDayWeather.Pending(false))
     var weather = _weather
 
+    private var _weatherDetails = MutableStateFlow<WeatherDetails?>(null)
+    var weatherDetails = _weatherDetails
+
     fun fetchFiveDayWeather(zip: Int) {
         _weather.value = FiveDayWeather.Pending(true)
         viewModelScope.launch {
             val cityWeatherData = fetchWeatherUseCase.getCityWeatherData()
-
             val location: Deferred<Location?> = async {
                 when (val loc = fetchWeatherUseCase.fetchLocation(zip).catch {
                     it.message // TODO: Log this
                 }.first()) {
                     is NetworkRequest.Error -> {
                         Location(
-                            country = cityWeatherData.country,
-                            lat = cityWeatherData.lat ?: 0.0,
-                            lon = cityWeatherData.lon ?: 0.0,
-                            name = cityWeatherData.name,
-                            zip = cityWeatherData.zip,
+                            country = cityWeatherData?.country,
+                            lat = cityWeatherData?.lat ?: 0.0,
+                            lon = cityWeatherData?.lon ?: 0.0,
+                            name = cityWeatherData?.name,
+                            zip = cityWeatherData?.zip,
                         )
                     }
                     is NetworkRequest.Success -> {
@@ -106,15 +110,22 @@ class MainViewModel @Inject constructor(
                                 cityTemps = cityTemps,
                             )
 
-                            val  entity = com.mccarty.fivedayweather.domain.entity.FiveDayWeather(cityWeatherData = Gson().toJson(cityData))
-
                             _weather.value = FiveDayWeather.Success(items)
                             viewModelScope.launch {
-                                insertWeatherUseCas.insertFiveDayWeather(entity)
+                                insertWeatherUseCas.insertFiveDayWeather(
+                                    FiveDayWeather(
+                                        id = cityData.zip?.toInt(),
+                                        cityWeatherData = Gson().toJson(cityData),
+                                    )
+                                )
                             }
                         }
                     }
                 }
         }
+    }
+
+    fun updateWeatherDetails(weatherDetails: WeatherDetails) {
+        _weatherDetails.value = weatherDetails
     }
 }

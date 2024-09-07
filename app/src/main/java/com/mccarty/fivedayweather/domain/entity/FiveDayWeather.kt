@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "city_weather")
 data class FiveDayWeather(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @PrimaryKey var id: Int? = 0,
     @ColumnInfo(name = "city_weather_data") val cityWeatherData: String,
 )

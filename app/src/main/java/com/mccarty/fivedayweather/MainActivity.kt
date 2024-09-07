@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mccarty.fivedayweather.ui.MainViewModel
@@ -33,11 +34,17 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val weather = mainViewModel.weather.collectAsState().value
                         val navController: NavHostController = rememberNavController()
+                        val weatherDetails = mainViewModel.weatherDetails.collectAsStateWithLifecycle().value
                         MainScreen(
                             weather = weather,
+                            weatherDetails = weatherDetails,
                             navController = navController,
+                            padding = padding,
                             onSubmit = { zip ->
                                 mainViewModel.fetchFiveDayWeather(zip)
+                            },
+                            onCardClick = {
+                                mainViewModel.updateWeatherDetails(it)
                             },
                         )
                     }

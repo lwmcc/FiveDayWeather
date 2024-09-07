@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,14 +39,18 @@ import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.ListItem
 import com.mccarty.fivedayweather.navigation.AppNavigation
 import com.mccarty.fivedayweather.navigation.DestinationKeys
+import com.mccarty.fivedayweather.ui.MainViewModel
 import com.mccarty.fivedayweather.ui.MainViewModel as FiveDayWeather
 
 
 @Composable
 fun MainScreen(
-    weather: FiveDayWeather.FiveDayWeather,
+    weather: MainViewModel.FiveDayWeather,
+    weatherDetails: WeatherDetails?,
     navController: NavHostController,
+    padding: PaddingValues,
     onSubmit: (Int) -> Unit,
+    onCardClick: (WeatherDetails) -> Unit,
     navActions: AppNavigation = remember(navController) {
         AppNavigation(navController)
     },
@@ -56,6 +61,7 @@ fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.onSurface)
+                    .padding(top = padding.calculateTopPadding())
             ) {
                 SearchBox(onClick = {
                     onSubmit(it)
@@ -69,13 +75,17 @@ fun MainScreen(
                     }
 
                     is FiveDayWeather.FiveDayWeather.Error -> {
-                        WeatherDataDb(weather = weather.cityWeatherDataDb, onCardClick = {
-                            navActions.navigateToDetails()
-                        })
+                        weather.cityWeatherDataDb?.let {
+                            WeatherDataDb(weather = it, onCardClick = { weatherDetails ->
+                                onCardClick(weatherDetails)
+                                navActions.navigateToDetails()
+                            })
+                        }
                     }
 
                     is FiveDayWeather.FiveDayWeather.Success -> {
-                        WeatherData(weather = weather.data, onCardClick = {
+                        WeatherData(weather = weather.data, onCardClick = { weatherDetails ->
+                            onCardClick(weatherDetails)
                             navActions.navigateToDetails()
                         })
                     }
@@ -83,7 +93,7 @@ fun MainScreen(
             }
         }
         composable(DestinationKeys.DETAILS_SCREEN.name) {
-            WeatherDetailsComponents()
+            WeatherDetailsComponents(weatherDetails)
         }
     }
 }
@@ -104,8 +114,14 @@ fun SearchBox(onClick: (Int) -> Unit) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-            onClick(searchText.toInt())
-        }
+                onClick(
+                    if (searchText.trim().isEmpty()) {
+                        0
+                    } else {
+                        searchText.toInt()
+                    }
+                )
+            }
         ) {
             Text(stringResource(id = R.string.submit))
         }
@@ -113,35 +129,42 @@ fun SearchBox(onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun WeatherData(weather: List<ListItem>, onCardClick: () -> Unit) {
+fun WeatherData(weather: List<ListItem>, onCardClick: (WeatherDetails) -> Unit) {
     LazyColumn {
         items(weather) { weatherItem ->
             WeatherItem(weatherItem, onCardClick = {
-                onCardClick()
+                onCardClick(it)
             })
         }
     }
 }
 
 @Composable
-fun WeatherDataDb(weather: CityWeatherData, onCardClick: () -> Unit) {
+fun WeatherDataDb(weather: CityWeatherData, onCardClick: (WeatherDetails) -> Unit) {
     LazyColumn {
         items(weather.cityTemps) { weatherItem ->
             WeatherItemDb(weatherItem, onCardClick = {
-                onCardClick()
+                onCardClick(it)
             })
         }
     }
 }
 
 @Composable
-fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
+fun WeatherItem(weatherItem: ListItem, onCardClick: (WeatherDetails) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
                 onClick = {
-                    onCardClick()
+                    onCardClick(
+                        WeatherDetails(
+                            temp = weatherItem.main.temp,
+                            tempMin = weatherItem.main.tempMin,
+                            temMax = weatherItem.main.tempMax,
+                            description = weatherItem.weather.firstOrNull()?.description,
+                        )
+                    )
                 }
             )
             .padding(5.dp)
@@ -164,13 +187,13 @@ fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
-                text = "${weatherItem.main.temp}\u00B0 ",
+                text = "${weatherItem.main.temp.toInt()}\u00B0 ",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
 
             Text(
-                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike}\u00B0",
+                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike.toInt()}\u00B0",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )
@@ -185,13 +208,20 @@ fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
 }
 
 @Composable
-fun WeatherItemDb(weatherItem: CityTemp, onCardClick: () -> Unit) {
+fun WeatherItemDb(weatherItem: CityTemp, onCardClick: (WeatherDetails) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
                 onClick = {
-                    onCardClick()
+                    onCardClick(
+                        WeatherDetails(
+                            temp = weatherItem.main.temp,
+                            tempMin = weatherItem.main.tempMin,
+                            temMax = weatherItem.main.tempMax,
+                            description = weatherItem.weather.firstOrNull()?.description,
+                        )
+                    )
                 }
             )
             .padding(5.dp)
@@ -214,13 +244,13 @@ fun WeatherItemDb(weatherItem: CityTemp, onCardClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
-                text = "${weatherItem.main.temp}\u00B0",
+                text = "${weatherItem.main.temp.toInt()}\u00B0",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
 
             Text(
-                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike}\u00B0",
+                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike.toInt()}\u00B0",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )
@@ -233,3 +263,10 @@ fun WeatherItemDb(weatherItem: CityTemp, onCardClick: () -> Unit) {
         }
     }
 }
+
+data class WeatherDetails(
+    val temp: Double? = 0.0,
+    val tempMin: Double? = 0.0,
+    val temMax: Double? = 0.0,
+    val description: String? = null,
+)
