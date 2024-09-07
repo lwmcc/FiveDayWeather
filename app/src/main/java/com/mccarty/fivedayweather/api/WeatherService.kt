@@ -4,6 +4,7 @@ import com.mccarty.fivedayweather.Constants.APP_ID_URL
 import com.mccarty.fivedayweather.Constants.FORECAST_URL
 import com.mccarty.fivedayweather.Constants.LAT_URL
 import com.mccarty.fivedayweather.Constants.LON_URL
+import com.mccarty.fivedayweather.Constants.UNITS_URL
 import com.mccarty.fivedayweather.Constants.ZIP_URL
 import com.mccarty.fivedayweather.domain.model.ApiResponse
 import com.mccarty.fivedayweather.domain.model.Location
@@ -17,6 +18,7 @@ interface WeatherService {
         @Query(LAT_URL) lat: String,
         @Query(LON_URL) lon: String,
         @Query(APP_ID_URL) appid: String,
+        @Query(UNITS_URL) units: String,
     ): NetworkRequest<ApiResponse>
 
     @GET(ZIP_URL)

@@ -3,4 +3,8 @@
     <string name="screen_load_error">An Error Occurred While Loading Data...</string>
     <string name="submit">Submit</string>
     <string name="zip_code">Zip Code</string>
+
+    <string name="feels_like">Feels like</string>
+    <string name="humidity">Humidity %1$s%%</string>
+    <string name="content_weather_icon">Weather icon</string>
 </resources>

@@ -2,12 +2,12 @@ package com.mccarty.fivedayweather.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -27,7 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -94,13 +94,16 @@ fun SearchBox(onClick: (Int) -> Unit) {
     val pattern = Regex("^\\d+\$")
     var searchText by rememberSaveable { mutableStateOf("") }
 
-    Row {
+    Column(modifier = Modifier.fillMaxWidth()) {
         TextField(
+            modifier = Modifier.fillMaxWidth(),
             value = searchText,
             onValueChange = { if (it.length <= maxLength && it.matches(pattern)) searchText = it },
             label = { Text(stringResource(id = R.string.zip_code)) },
         )
-        Button(onClick = {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
             onClick(searchText.toInt())
         }
         ) {
@@ -133,7 +136,6 @@ fun WeatherDataDb(weather: CityWeatherData, onCardClick: () -> Unit) {
 
 @Composable
 fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,45 +157,28 @@ fun WeatherItem(weatherItem: ListItem, onCardClick: () -> Unit) {
             containerColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
-        Text(
-            text = weatherItem.main.temp.toString(),
+        Row(
             modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Text(
-            text = weatherItem.main.feelsLike.toString(),
-            modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Text(
-            text = weatherItem.wind.speed.toString(),
-            modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        weatherItem.weather.forEach {
+                .padding(24.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
             Text(
-                text = it.description,
-                modifier = Modifier
-                    .paddingFromBaseline(top = 25.dp)
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+                text = "${weatherItem.main.temp}\u00B0 ",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Text(
+                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike}\u00B0",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
+            )
+            
+            Text(
+                text = stringResource(id = R.string.humidity, weatherItem.main.humidity.toString()),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
             )
         }
     }
@@ -222,34 +207,29 @@ fun WeatherItemDb(weatherItem: CityTemp, onCardClick: () -> Unit) {
             containerColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
-        Text(
-            text = weatherItem.temp.toString(),
+        Row(
             modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+                .padding(24.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            Text(
+                text = "${weatherItem.main.temp}\u00B0",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
 
-        Text(
-            text = weatherItem.feelsLike.toString(),
-            modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+            Text(
+                text = "${stringResource(id = R.string.feels_like)} ${weatherItem.main.feelsLike}\u00B0",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
+            )
 
-        Text(
-            text = weatherItem.speed.toString(),
-            modifier = Modifier
-                .paddingFromBaseline(top = 25.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+            Text(
+                text = stringResource(id = R.string.humidity, weatherItem.main.humidity.toString()),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
+            )
+        }
     }
 }

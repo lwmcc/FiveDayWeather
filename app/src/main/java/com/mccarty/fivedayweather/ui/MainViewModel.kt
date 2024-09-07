@@ -36,8 +36,8 @@ class MainViewModel @Inject constructor(
     var weather = _weather
 
     fun fetchFiveDayWeather(zip: Int) {
+        _weather.value = FiveDayWeather.Pending(true)
         viewModelScope.launch {
-
             val cityWeatherData = fetchWeatherUseCase.getCityWeatherData()
 
             val location: Deferred<Location?> = async {

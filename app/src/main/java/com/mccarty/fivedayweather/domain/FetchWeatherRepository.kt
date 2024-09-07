@@ -2,6 +2,7 @@ package com.mccarty.fivedayweather.domain
 
 import com.mccarty.fivedayweather.Constants.APP_ID
 import com.mccarty.fivedayweather.Constants.FORECAST_URL
+import com.mccarty.fivedayweather.Constants.FORMAT_URL
 import com.mccarty.fivedayweather.Constants.ZIP_URL
 import com.mccarty.fivedayweather.api.WeatherService
 import com.mccarty.fivedayweather.domain.entity.FiveDayWeather
@@ -19,7 +20,7 @@ class FetchWeatherRepository @Inject constructor(
     private val appDatabase: AppDatabase,
 ) : Repository, InsertLocalRepository, GetLocalRepository {
     override suspend fun fetchWeatherLatLon(lat: String, lon: String): NetworkRequest<ApiResponse> {
-        return weatherServiceForecast.fetch5DayWeatherLatLon(lat, lon, APP_ID)
+        return weatherServiceForecast.fetch5DayWeatherLatLon(lat, lon, APP_ID, FORMAT_URL)
     }
 
     override suspend fun fetchLocation(zip: Int): NetworkRequest<Location> {
