@@ -6,5 +6,5 @@ import com.mccarty.fivedayweather.domain.network.NetworkRequest
 
 interface Repository {
     suspend fun fetchWeatherLatLon(lat: String, lon: String): NetworkRequest<ApiResponse>
-    suspend fun fetchLocation(zip: String): NetworkRequest<Location>
+    suspend fun fetchLocation(zip: Int): NetworkRequest<Location>
 }

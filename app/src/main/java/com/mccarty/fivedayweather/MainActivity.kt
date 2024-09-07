@@ -10,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.mccarty.fivedayweather.ui.MainViewModel
 import com.mccarty.fivedayweather.ui.components.MainScreen
 import com.mccarty.fivedayweather.ui.theme.FiveDayWeatherTheme
@@ -30,7 +32,14 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val weather = mainViewModel.weather.collectAsState().value
-                        MainScreen(weather) { zip -> mainViewModel.fetchFiveDayWeather(zip) }
+                        val navController: NavHostController = rememberNavController()
+                        MainScreen(
+                            weather = weather,
+                            navController = navController,
+                            onSubmit = { zip ->
+                                mainViewModel.fetchFiveDayWeather(zip)
+                            },
+                        )
                     }
                 }
             }

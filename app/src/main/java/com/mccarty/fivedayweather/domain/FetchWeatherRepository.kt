@@ -22,8 +22,8 @@ class FetchWeatherRepository @Inject constructor(
         return weatherServiceForecast.fetch5DayWeatherLatLon(lat, lon, APP_ID)
     }
 
-    override suspend fun fetchLocation(zip: String): NetworkRequest<Location> {
-        return weatherServiceZip.fetchLocationWithZip(zip, APP_ID)
+    override suspend fun fetchLocation(zip: Int): NetworkRequest<Location> {
+        return weatherServiceZip.fetchLocationWithZip(zip.toString(), APP_ID)
     }
 
     override suspend fun insertFiveDayWeather(fiveDayWeather: FiveDayWeather ) {

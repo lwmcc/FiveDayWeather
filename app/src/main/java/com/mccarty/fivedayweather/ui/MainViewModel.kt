@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
     private var _weather = MutableStateFlow<FiveDayWeather>(FiveDayWeather.Pending(false))
     var weather = _weather
 
-    fun fetchFiveDayWeather(zip: String) {
+    fun fetchFiveDayWeather(zip: Int) {
         viewModelScope.launch {
 
             val cityWeatherData = fetchWeatherUseCase.getCityWeatherData()

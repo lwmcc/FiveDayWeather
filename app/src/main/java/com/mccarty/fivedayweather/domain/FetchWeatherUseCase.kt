@@ -16,7 +16,7 @@ class FetchWeatherUseCase @Inject constructor(
     private val getWeatherRepository: GetLocalRepository,
 ): FetchWeather {
 
-    override suspend fun fetchLocation(zip: String): Flow<NetworkRequest<Location>> = flow {
+    override suspend fun fetchLocation(zip: Int): Flow<NetworkRequest<Location>> = flow {
         emit(fetchWeatherRepository.fetchLocation(zip))
     }
 

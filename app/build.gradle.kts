@@ -100,8 +100,8 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     kapt(libs.androidx.room.compiler)
 
-    // MockK
-    // testImplementation (libs.mockk)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
 }
 
 

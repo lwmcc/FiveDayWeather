@@ -19,6 +19,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,48 +29,67 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.mccarty.fivedayweather.R
 import com.mccarty.fivedayweather.domain.model.CityTemp
 import com.mccarty.fivedayweather.domain.model.CityWeatherData
 import com.mccarty.fivedayweather.domain.model.ListItem
+import com.mccarty.fivedayweather.navigation.AppNavigation
+import com.mccarty.fivedayweather.navigation.DestinationKeys
 import com.mccarty.fivedayweather.ui.MainViewModel as FiveDayWeather
 
 
 @Composable
-fun MainScreen(weather: FiveDayWeather.FiveDayWeather, onClick: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onSurface)
-    ) {
-        SearchBox(onClick = {
-            onClick(it)
-        })
+fun MainScreen(
+    weather: FiveDayWeather.FiveDayWeather,
+    navController: NavHostController,
+    onSubmit: (Int) -> Unit,
+    navActions: AppNavigation = remember(navController) {
+        AppNavigation(navController)
+    },
+) {
+    NavHost(navController = navController, startDestination = DestinationKeys.MAIN_SCREEN.name) {
+        composable(DestinationKeys.MAIN_SCREEN.name) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onSurface)
+            ) {
+                SearchBox(onClick = {
+                    onSubmit(it)
+                })
 
-        when (weather) {
-            is FiveDayWeather.FiveDayWeather.Pending -> {
-                if (weather.pending) {
-                    CircleSpinner()
+                when (weather) {
+                    is FiveDayWeather.FiveDayWeather.Pending -> {
+                        if (weather.pending) {
+                            CircleSpinner()
+                        }
+                    }
+
+                    is FiveDayWeather.FiveDayWeather.Error -> {
+                        WeatherDataDb(weather = weather.cityWeatherDataDb, onCardClick = {
+                            navActions.navigateToDetails()
+                        })
+                    }
+
+                    is FiveDayWeather.FiveDayWeather.Success -> {
+                        WeatherData(weather = weather.data, onCardClick = {
+                            navActions.navigateToDetails()
+                        })
+                    }
                 }
             }
-
-            is FiveDayWeather.FiveDayWeather.Error -> {
-                WeatherDataDb(weather = weather.cityWeatherDataDb, onCardClick = {
-                    // TODO: go to next screen
-                })
-            }
-
-            is FiveDayWeather.FiveDayWeather.Success -> {
-                WeatherData(weather = weather.data, onCardClick = {
-                    // TODO: go to next screen
-                })
-            }
+        }
+        composable(DestinationKeys.DETAILS_SCREEN.name) {
+            WeatherDetailsComponents()
         }
     }
 }
 
 @Composable
-fun SearchBox(onClick: (String) -> Unit) {
+fun SearchBox(onClick: (Int) -> Unit) {
     val maxLength = 5
     val pattern = Regex("^\\d+\$")
     var searchText by rememberSaveable { mutableStateOf("") }
@@ -81,7 +101,7 @@ fun SearchBox(onClick: (String) -> Unit) {
             label = { Text(stringResource(id = R.string.zip_code)) },
         )
         Button(onClick = {
-            onClick(searchText)
+            onClick(searchText.toInt())
         }
         ) {
             Text(stringResource(id = R.string.submit))
