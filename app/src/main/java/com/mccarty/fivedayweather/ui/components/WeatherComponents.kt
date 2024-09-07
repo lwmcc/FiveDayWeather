@@ -187,7 +187,7 @@ fun WeatherItem(weatherItem: ListItem, onCardClick: (WeatherDetails) -> Unit) {
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
-                text = "${weatherItem.main.temp.toInt()}\u00B0 ",
+                text = "${weatherItem.main.temp.toInt()}\u00B0",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )

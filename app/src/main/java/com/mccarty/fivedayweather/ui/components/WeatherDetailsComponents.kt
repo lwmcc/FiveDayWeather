@@ -35,7 +35,7 @@ fun WeatherDetailsComponents(weatherDetails: WeatherDetails?) {
                         )
 
                         Text(
-                            text = weatherDetails.temp?.toInt().toString(),
+                            text = "${weatherDetails.temp?.toInt()}\u00B0",
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.surface,
@@ -56,7 +56,7 @@ fun WeatherDetailsComponents(weatherDetails: WeatherDetails?) {
 
                         Text(
                             modifier = Modifier.padding(12.dp),
-                            text = weatherDetails.temMax?.toInt().toString(),
+                            text = "${weatherDetails.temMax?.toInt()}\u00B0",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.surface,
@@ -74,7 +74,7 @@ fun WeatherDetailsComponents(weatherDetails: WeatherDetails?) {
 
                         Text(
                             modifier = Modifier.padding(12.dp),
-                            text = weatherDetails.tempMin?.toInt().toString(),
+                            text = "${weatherDetails.tempMin?.toInt()}\u00B0",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.surface,
